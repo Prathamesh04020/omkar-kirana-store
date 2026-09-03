@@ -73,15 +73,15 @@ const IMG = {
 };
 
 const CATEGORIES = [
-  { key: "grocery",   name: "Grocery & Staples", img: IMG.cat_grocery },
-  { key: "pulses",    name: "Dal, Pulses & Grains", img: IMG.cat_pulses },
-  { key: "masala",    name: "Masala & Spices", img: IMG.cat_masala },
-  { key: "snacks",    name: "Snacks & Biscuits", img: IMG.cat_snacks },
-  { key: "beverages", name: "Beverages", img: IMG.cat_beverages },
-  { key: "instant",   name: "Instant Food", img: IMG.cat_instant },
-  { key: "household", name: "Household", img: IMG.cat_household },
-  { key: "personal",  name: "Personal Care", img: IMG.cat_personal },
-  { key: "dairy",     name: "Dairy & Daily Essentials", img: IMG.cat_dairy },
+  { key: "grocery",   name: "किराणा व जीवनावश्यक वस्तू", img: IMG.cat_grocery },
+  { key: "pulses",    name: "डाळी व कडधान्ये", img: IMG.cat_pulses },
+  { key: "masala",    name: "मसाले", img: IMG.cat_masala },
+  { key: "snacks",    name: "स्नॅक्स व बिस्किटे", img: IMG.cat_snacks },
+  { key: "beverages", name: "पेये", img: IMG.cat_beverages },
+  { key: "instant",   name: "इन्स्टंट फूड", img: IMG.cat_instant },
+  { key: "household", name: "घरगुती वस्तू", img: IMG.cat_household },
+  { key: "personal",  name: "पर्सनल केअर", img: IMG.cat_personal },
+  { key: "dairy",     name: "दुग्धजन्य व दैनंदिन वस्तू", img: IMG.cat_dairy },
 ];
 
 const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.key, c]));
@@ -204,17 +204,19 @@ let searchTerm = "";
 let cart = JSON.parse(localStorage.getItem("okStoreCart") || "{}");
 
 /* ===== HERO / PROMO / ABOUT IMAGES ===== */
-document.getElementById("heroImg").src = IMG.hero;
 document.getElementById("promoImg1").src = IMG.promo1;
 document.getElementById("promoImg2").src = IMG.promo2;
 document.getElementById("aboutImg").src = IMG.about;
+document.querySelectorAll(".hero-basket img[data-img]").forEach(img => {
+  img.src = IMG[img.dataset.img];
+});
 
 /* ===== RENDER CATEGORIES ===== */
 const catScroll = document.getElementById("catScroll");
 function renderCategories() {
   const allChip = `<div class="cat-card" data-cat="all">
-      <div class="cat-img-wrap"><img src="${IMG.cat_grocery}" alt="All products" loading="lazy"></div>
-      <span class="cat-name">All</span>
+      <div class="cat-img-wrap"><img src="${IMG.cat_grocery}" alt="सर्व उत्पादने" loading="lazy"></div>
+      <span class="cat-name">सर्व</span>
     </div>`;
   const cards = CATEGORIES.map(c => `
     <div class="cat-card" data-cat="${c.key}">
@@ -235,7 +237,7 @@ function renderCategories() {
 /* ===== FILTER CHIPS ===== */
 const filterChips = document.getElementById("filterChips");
 function renderChips() {
-  const chips = [{ key: "all", name: "All" }, ...CATEGORIES];
+  const chips = [{ key: "all", name: "सर्व" }, ...CATEGORIES];
   filterChips.innerHTML = chips.map(c =>
     `<button class="chip ${activeCategory === c.key ? "active" : ""}" data-cat="${c.key}">${c.name}</button>`
   ).join("");
@@ -266,7 +268,7 @@ function renderProducts() {
     return `
     <div class="product-card">
       <div class="product-thumb">
-        <span class="product-badge">${off}% OFF</span>
+        <span class="product-badge">${off}% सूट</span>
         <img src="${pr.img}" alt="${pr.name}" loading="lazy">
       </div>
       <div class="product-body">
@@ -278,7 +280,7 @@ function renderProducts() {
             <span class="price-old">₹${oldPrice}</span>
             <span class="price">₹${pr.price}</span>
           </div>
-          <button class="add-btn" data-id="${pr.id}" aria-label="Add to list">${qty > 0 ? `In List (${qty})` : "Add"}</button>
+          <button class="add-btn" data-id="${pr.id}" aria-label="यादीत टाका">${qty > 0 ? `यादीत आहे (${qty})` : "टाका"}</button>
         </div>
       </div>
     </div>`;
@@ -326,7 +328,7 @@ function renderCart() {
   cartCount.textContent = totalQty;
 
   if (entries.length === 0) {
-    cartItemsEl.innerHTML = `<p class="cart-empty">Your list is empty.<br>Start adding products! 🛍️</p>`;
+    cartItemsEl.innerHTML = `<p class="cart-empty">तुमची यादी रिकामी आहे.<br>उत्पादने जोडायला सुरुवात करा! 🛍️</p>`;
     cartTotalEl.textContent = "₹0";
     cartTotalMini.textContent = "0";
     orderWhatsapp.href = `https://wa.me/${STORE_PHONE}`;
@@ -363,12 +365,12 @@ function renderCart() {
   });
 
   // build whatsapp order message
-  let msg = "Namaste Omkar Kirana Store! 🙏%0AMujhe yeh items chahiye:%0A%0A";
+  let msg = "नमस्कार ओमकार किराणा स्टोअर! 🙏%0Aमला खालील वस्तू हव्या आहेत:%0A%0A";
   entries.forEach(([id, v]) => {
     const pr = PRODUCTS.find(x => x.id === Number(id));
     msg += `• ${pr.name} x ${v.qty}%0A`;
   });
-  msg += `%0ATotal (approx): ₹${total}%0A%0APlease confirm availability. Dhanyawad!`;
+  msg += `%0Aएकूण (अंदाजे): ₹${total}%0A%0Aकृपया उपलब्धता निश्चित करा. धन्यवाद!`;
   orderWhatsapp.href = `https://wa.me/${STORE_PHONE}?text=${msg}`;
 }
 
