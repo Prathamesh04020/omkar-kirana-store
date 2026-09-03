@@ -207,7 +207,7 @@ let cart = JSON.parse(localStorage.getItem("okStoreCart") || "{}");
 document.getElementById("promoImg1").src = IMG.promo1;
 document.getElementById("promoImg2").src = IMG.promo2;
 document.getElementById("aboutImg").src = IMG.about;
-document.querySelectorAll(".hero-basket img[data-img]").forEach(img => {
+document.querySelectorAll(".item[data-img]").forEach(img => {
   img.src = IMG[img.dataset.img];
 });
 
