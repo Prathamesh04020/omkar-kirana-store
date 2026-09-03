@@ -365,7 +365,7 @@ function renderCart() {
   });
 
   // build whatsapp order message
-  let msg = "नमस्कार ओमकार किराणा स्टोअर! 🙏%0Aमला खालील वस्तू हव्या आहेत:%0A%0A";
+  let msg = "नमस्कार ॐ कार किराणा स्टोअर! 🙏%0Aमला खालील वस्तू हव्या आहेत:%0A%0A";
   entries.forEach(([id, v]) => {
     const pr = PRODUCTS.find(x => x.id === Number(id));
     msg += `• ${pr.name} x ${v.qty}%0A`;
