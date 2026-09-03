@@ -19,8 +19,8 @@
   --radius:18px;
   --shadow:0 8px 24px rgba(15,47,22,0.08);
   --shadow-lg:0 18px 40px rgba(15,47,22,0.14);
-  --font-head:'Baloo 2', sans-serif;
-  --font-body:'Poppins', sans-serif;
+  --font-head:'Baloo 2', 'Noto Sans Devanagari', sans-serif;
+  --font-body:'Poppins', 'Noto Sans Devanagari', sans-serif;
 }
 
 *{box-sizing:border-box; margin:0; padding:0;}
@@ -322,11 +322,11 @@ h1,h2,h3,h4{font-family:var(--font-head); font-weight:700; line-height:1.15;}
 }
 .overlay.open{opacity:1; pointer-events:auto;}
 .cart-drawer{
-  position:fixed; top:0; right:-420px; width:100%; max-width:400px; height:100%;
+  position:fixed; top:0; right:0; width:100%; max-width:400px; height:100%;
   background:#fff; z-index:950; box-shadow:-10px 0 30px rgba(0,0,0,0.15);
-  display:flex; flex-direction:column; transition:right .35s ease;
+  display:flex; flex-direction:column; transform:translateX(100%); transition:transform .35s ease;
 }
-.cart-drawer.open{right:0;}
+.cart-drawer.open{transform:translateX(0);}
 .cart-head{display:flex; align-items:center; justify-content:space-between; padding:22px 24px; border-bottom:1px solid var(--border);}
 .cart-head h3{font-size:1.15rem;}
 .cart-head button{font-size:1.2rem; width:36px; height:36px; border-radius:50%; background:var(--green-50);}
@@ -385,6 +385,11 @@ h1,h2,h3,h4{font-family:var(--font-head); font-weight:700; line-height:1.15;}
   .hamburger{display:flex;}
   .mobile-search{display:block; padding:12px 0;}
   .mobile-search .header-search{display:flex; max-width:100%;}
+  .header-inner{gap:10px;}
+  .logo-text{font-size:1.05rem;}
+  .header-action:not(.cart-btn){display:none;}
+  .header-action .ha-text{display:none;}
+  .header-actions{gap:10px;}
   .hero-text h1{font-size:2.1rem;}
   .section{padding:44px 0;}
   .section-head h2{font-size:1.5rem;}
