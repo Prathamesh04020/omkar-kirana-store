@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ॐ कार किराणा — अ‍ॅडमिन पॅनेल</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-900:#163D1F; --green-700:#256B36; --green-600:#2E7D32; --green-500:#3E9142;
+    --green-100:#E8F5E9; --green-50:#F3FAF3; --orange:#FF7A30; --bg:#F7FAF5;
+    --ink:#1D2A1F; --ink-soft:#5C6B5E; --border:#E3ECE1; --white:#fff;
+    --radius:14px; --shadow:0 8px 20px rgba(15,47,22,0.1);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Poppins','Noto Sans Devanagari',sans-serif; background:var(--bg); color:var(--ink); font-weight:600;}
+  h1,h2,h3{font-weight:800;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  input,select{font-family:inherit; font-weight:600;}
+
+  /* ===== LOGIN ===== */
+  #loginScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .login-card{
+    background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:40px 32px;
+    max-width:380px; width:100%; text-align:center;
+  }
+  .login-card .logo-badge{
+    width:56px; height:56px; border-radius:14px; background:var(--green-600); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin:0 auto 16px;
+  }
+  .login-card h1{font-size:1.3rem; margin-bottom:6px;}
+  .login-card p{color:var(--ink-soft); font-size:0.85rem; margin-bottom:22px;}
+  .field{text-align:left; margin-bottom:14px;}
+  .field label{display:block; font-size:0.82rem; margin-bottom:6px; color:var(--ink-soft);}
+  .field input{
+    width:100%; padding:12px 14px; border-radius:10px; border:2px solid var(--border); outline:none; font-size:0.95rem;
+  }
+  .field input:focus{border-color:var(--green-600);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    padding:13px; border-radius:10px; background:var(--green-600); color:#fff; font-weight:700; font-size:0.95rem;
+    margin-top:8px; transition:background .2s;
+  }
+  .btn:hover{background:var(--green-700);}
+  .btn-outline{background:#fff; color:var(--green-700); border:2px solid var(--green-600);}
+  .btn-danger{background:#e53935;}
+  .btn-sm{padding:8px 14px; font-size:0.8rem; width:auto;}
+  .error-msg{color:#c62828; font-size:0.82rem; margin-top:10px; min-height:18px;}
+
+  /* ===== ADMIN APP ===== */
+  #adminApp{display:none; min-height:100vh;}
+  .admin-header{
+    background:var(--green-600); color:#fff; padding:16px 20px; display:flex; align-items:center;
+    justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .admin-header h1{font-size:1.15rem;}
+  .admin-header .admin-user{font-size:0.8rem; opacity:0.9; font-weight:500;}
+  .admin-main{max-width:1100px; margin:0 auto; padding:24px 20px 80px;}
+
+  .toolbar{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;}
+  .toolbar h2{font-size:1.2rem;}
+  .toolbar-actions{display:flex; gap:10px; flex-wrap:wrap;}
+
+  .cat-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
+  .cat-tab{
+    padding:8px 14px; border-radius:99px; background:#fff; border:1px solid var(--border);
+    font-size:0.8rem; color:var(--ink-soft);
+  }
+  .cat-tab.active{background:var(--green-600); color:#fff; border-color:var(--green-600);}
+
+  .product-table{
+    background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+  }
+  .product-row{
+    display:flex; align-items:center; gap:14px; padding:12px 16px; border-bottom:1px solid var(--border);
+  }
+  .product-row:last-child{border-bottom:none;}
+  .product-row img{width:48px; height:48px; border-radius:8px; object-fit:cover; flex-shrink:0; background:var(--green-50);}
+  .product-row .p-info{flex:1; min-width:0;}
+  .product-row .p-name{font-size:0.88rem;}
+  .product-row .p-meta{font-size:0.75rem; color:var(--ink-soft); font-weight:500;}
+  .product-row .p-actions{display:flex; gap:8px; flex-shrink:0;}
+  .icon-btn{
+    width:32px; height:32px; border-radius:8px; background:var(--green-50); display:flex;
+    align-items:center; justify-content:center; font-size:0.9rem;
+  }
+  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:0.88rem;}
+
+  /* ===== MODAL ===== */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:900; display:none;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-card{
+    background:#fff; border-radius:var(--radius); max-width:420px; width:100%; padding:26px;
+    max-height:90vh; overflow-y:auto;
+  }
+  .modal-card h3{font-size:1.1rem; margin-bottom:18px;}
+  .photo-preview{
+    width:100%; height:160px; border-radius:10px; background:var(--green-50); display:flex;
+    align-items:center; justify-content:center; overflow:hidden; margin-bottom:14px; border:2px dashed var(--border);
+  }
+  .photo-preview img{width:100%; height:100%; object-fit:cover;}
+  .photo-preview span{color:var(--ink-soft); font-size:0.8rem;}
+  .field select{width:100%; padding:12px 14px; border-radius:10px; border:2px solid var(--border); outline:none; font-size:0.95rem; background:#fff;}
+  .modal-actions{display:flex; gap:10px; margin-top:8px;}
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink);
+    color:#fff; padding:12px 22px; border-radius:99px; font-size:0.85rem; z-index:1000; opacity:0;
+    transition:opacity .3s; pointer-events:none;
+  }
+  .toast.show{opacity:1;}
+  .spinner{
+    width:16px; height:16px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff;
+    border-radius:50%; animation:spin .7s linear infinite; display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .seed-note{font-size:0.72rem; color:var(--ink-soft); margin-top:6px;}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="logo-badge">🛒</div>
+    <h1>ॐ कार किराणा स्टोअर</h1>
+    <p>अ‍ॅडमिन पॅनेलमध्ये लॉगिन करा</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>ईमेल</label>
+        <input type="email" id="loginEmail" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>पासवर्ड</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn" id="loginBtn">लॉगिन करा</button>
+      <p class="error-msg" id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ===== ADMIN APP ===== -->
+<div id="adminApp">
+  <header class="admin-header">
+    <h1>🛒 ॐ कार किराणा — अ‍ॅडमिन</h1>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span class="admin-user" id="adminUserLabel"></span>
+      <button class="btn btn-outline btn-sm" id="logoutBtn" style="color:#fff; border-color:#fff;">लॉगआऊट</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="toolbar">
+      <h2>उत्पादने व्यवस्थापन</h2>
+      <div class="toolbar-actions">
+        <button class="btn btn-outline btn-sm" id="seedBtn">आरंभिक उत्पादने भरा</button>
+        <button class="btn btn-sm" id="addProductBtn">+ नवीन उत्पादन जोडा</button>
+      </div>
+    </div>
+    <p class="seed-note" id="seedNote"></p>
+
+    <div class="cat-tabs" id="catTabs"></div>
+
+    <div class="product-table" id="productTable">
+      <div class="empty-state">लोड होत आहे...</div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-card">
+    <h3 id="modalTitle">नवीन उत्पादन जोडा</h3>
+    <form id="productForm">
+      <div class="field">
+        <label>उत्पादनाचा फोटो</label>
+        <div class="photo-preview" id="photoPreview"><span>फोटो निवडा 📷</span></div>
+        <input type="file" id="photoInput" accept="image/*">
+      </div>
+      <div class="field">
+        <label>उत्पादनाचे नाव (मराठी)</label>
+        <input type="text" id="productName" placeholder="उदा. आशीर्वाद आटा (5 किलो)" required>
+      </div>
+      <div class="field">
+        <label>श्रेणी</label>
+        <select id="productCategory" required></select>
+      </div>
+      <div class="field">
+        <label>किंमत (₹)</label>
+        <input type="number" id="productPrice" min="1" step="1" required>
+      </div>
+      <input type="hidden" id="productId">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancelModalBtn">रद्द करा</button>
+        <button type="submit" class="btn" id="saveProductBtn">जतन करा</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="products-seed.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
