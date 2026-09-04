@@ -64,6 +64,28 @@
   .toolbar h2{font-size:1.2rem;}
   .toolbar-actions{display:flex; gap:10px; flex-wrap:wrap;}
 
+  .section-tabs{display:flex; gap:10px; margin-bottom:26px; border-bottom:2px solid var(--border);}
+  .section-tab{
+    padding:12px 18px; font-size:0.92rem; color:var(--ink-soft); border-bottom:3px solid transparent;
+    margin-bottom:-2px; position:relative;
+  }
+  .section-tab.active{color:var(--green-700); border-bottom-color:var(--green-600);}
+  .order-badge{
+    background:var(--orange); color:#fff; font-size:0.65rem; padding:2px 7px; border-radius:99px; margin-left:4px;
+  }
+  .order-list{display:flex; flex-direction:column; gap:14px;}
+  .order-card{background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:18px;}
+  .order-card-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .order-cust-name{font-size:0.98rem;}
+  .order-cust-phone{font-size:0.8rem; color:var(--ink-soft); font-weight:500;}
+  .order-time{font-size:0.72rem; color:var(--ink-soft); font-weight:500;}
+  .order-status{
+    padding:4px 12px; border-radius:99px; font-size:0.72rem; background:var(--green-100); color:var(--green-700);
+  }
+  .order-items{border-top:1px solid var(--border); padding-top:10px; margin-top:6px;}
+  .order-item-row{display:flex; justify-content:space-between; font-size:0.85rem; padding:3px 0; color:var(--ink-soft); font-weight:500;}
+  .order-item-row span:first-child{color:var(--ink); font-weight:600;}
+  .order-total{display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.95rem;}
   .cat-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
   .cat-tab{
     padding:8px 14px; border-radius:99px; background:#fff; border:1px solid var(--border);
@@ -156,19 +178,36 @@
   </header>
 
   <main class="admin-main">
-    <div class="toolbar">
-      <h2>उत्पादने व्यवस्थापन</h2>
-      <div class="toolbar-actions">
-        <button class="btn btn-outline btn-sm" id="seedBtn">आरंभिक उत्पादने भरा</button>
-        <button class="btn btn-sm" id="addProductBtn">+ नवीन उत्पादन जोडा</button>
+    <div class="section-tabs">
+      <button class="section-tab active" id="tabProducts">🛒 उत्पादने</button>
+      <button class="section-tab" id="tabOrders">📋 ऑर्डर्स <span class="order-badge" id="newOrderBadge" hidden></span></button>
+    </div>
+
+    <div id="productsSection">
+      <div class="toolbar">
+        <h2>उत्पादने व्यवस्थापन</h2>
+        <div class="toolbar-actions">
+          <button class="btn btn-outline btn-sm" id="seedBtn">आरंभिक उत्पादने भरा</button>
+          <button class="btn btn-sm" id="addProductBtn">+ नवीन उत्पादन जोडा</button>
+        </div>
+      </div>
+      <p class="seed-note" id="seedNote"></p>
+
+      <div class="cat-tabs" id="catTabs"></div>
+
+      <div class="product-table" id="productTable">
+        <div class="empty-state">लोड होत आहे...</div>
       </div>
     </div>
-    <p class="seed-note" id="seedNote"></p>
 
-    <div class="cat-tabs" id="catTabs"></div>
-
-    <div class="product-table" id="productTable">
-      <div class="empty-state">लोड होत आहे...</div>
+    <div id="ordersSection" style="display:none;">
+      <div class="toolbar">
+        <h2>ग्राहकांचे ऑर्डर्स</h2>
+        <button class="btn btn-outline btn-sm" id="refreshOrdersBtn">🔄 रिफ्रेश करा</button>
+      </div>
+      <div class="order-list" id="orderList">
+        <div class="empty-state">लोड होत आहे...</div>
+      </div>
     </div>
   </main>
 </div>

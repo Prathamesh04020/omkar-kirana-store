@@ -29,6 +29,14 @@ const cancelModalBtn = document.getElementById("cancelModalBtn");
 const saveProductBtn = document.getElementById("saveProductBtn");
 const toast = document.getElementById("toast");
 
+const tabProducts = document.getElementById("tabProducts");
+const tabOrders = document.getElementById("tabOrders");
+const productsSection = document.getElementById("productsSection");
+const ordersSection = document.getElementById("ordersSection");
+const orderList = document.getElementById("orderList");
+const refreshOrdersBtn = document.getElementById("refreshOrdersBtn");
+const newOrderBadge = document.getElementById("newOrderBadge");
+
 let allProducts = [];
 let activeAdminCategory = "all";
 let currentPhotoDataUrl = null;
@@ -262,9 +270,88 @@ seedBtn.addEventListener("click", async () => {
   seedBtn.textContent = "आरंभिक उत्पादने भरा";
 });
 
+/* ===== ORDERS ===== */
+function formatOrderTime(ts) {
+  if (!ts || !ts.toDate) return "";
+  const d = ts.toDate();
+  return d.toLocaleString("mr-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+async function loadOrders() {
+  orderList.innerHTML = `<div class="empty-state">लोड होत आहे...</div>`;
+  try {
+    const snap = await db.collection("orders").orderBy("createdAt", "desc").limit(100).get();
+    if (snap.empty) {
+      orderList.innerHTML = `<div class="empty-state">अजून एकही ऑर्डर आलेला नाही.</div>`;
+      newOrderBadge.hidden = true;
+      return;
+    }
+    let newCount = 0;
+    orderList.innerHTML = snap.docs.map(doc => {
+      const o = doc.data();
+      if (o.status === "नवीन") newCount++;
+      const items = (o.items || []).map(i =>
+        `<div class="order-item-row"><span>${i.name} × ${i.qty}</span><span>₹${i.price * i.qty}</span></div>`
+      ).join("");
+      return `
+      <div class="order-card">
+        <div class="order-card-head">
+          <div>
+            <div class="order-cust-name">👤 ${o.customerName || "नाव दिले नाही"}</div>
+            <div class="order-cust-phone">📞 ${o.customerPhone || "नंबर दिला नाही"}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="order-status">${o.status || "नवीन"}</div>
+            <div class="order-time">${formatOrderTime(o.createdAt)}</div>
+          </div>
+        </div>
+        <div class="order-items">${items}</div>
+        <div class="order-total"><span>एकूण</span><span>₹${o.total}</span></div>
+        <div class="modal-actions" style="margin-top:12px;">
+          <button class="btn btn-outline btn-sm" data-mark-done="${doc.id}">✅ पूर्ण झाले म्हणून चिन्हांकित करा</button>
+          <button class="btn btn-danger btn-sm" data-delete-order="${doc.id}">🗑️ काढा</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    newOrderBadge.hidden = newCount === 0;
+    newOrderBadge.textContent = newCount;
+
+    orderList.querySelectorAll("[data-mark-done]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        await db.collection("orders").doc(btn.dataset.markDone).update({ status: "पूर्ण झाले" });
+        loadOrders();
+      });
+    });
+    orderList.querySelectorAll("[data-delete-order]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("हा ऑर्डर काढून टाकायचा आहे का?")) return;
+        await db.collection("orders").doc(btn.dataset.deleteOrder).delete();
+        loadOrders();
+      });
+    });
+  } catch (err) {
+    orderList.innerHTML = `<div class="empty-state">त्रुटी: ${err.message}</div>`;
+  }
+}
+
+refreshOrdersBtn.addEventListener("click", loadOrders);
+
+function switchSection(section) {
+  const isProducts = section === "products";
+  productsSection.style.display = isProducts ? "block" : "none";
+  ordersSection.style.display = isProducts ? "none" : "block";
+  tabProducts.classList.toggle("active", isProducts);
+  tabOrders.classList.toggle("active", !isProducts);
+  if (!isProducts) loadOrders();
+}
+tabProducts.addEventListener("click", () => switchSection("products"));
+tabOrders.addEventListener("click", () => switchSection("orders"));
+
 /* ===== INIT ===== */
 function initAdmin() {
   fillCategoryDropdown();
   renderCatTabs();
   loadAllProducts();
+  loadOrders();
 }

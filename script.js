@@ -141,6 +141,8 @@ const cartTotalMini = document.getElementById("cartTotalMini");
 const cartItemsEl = document.getElementById("cartItems");
 const cartTotalEl = document.getElementById("cartTotal");
 const orderWhatsapp = document.getElementById("orderWhatsapp");
+const customerNameInput = document.getElementById("customerName");
+const customerPhoneInput = document.getElementById("customerPhone");
 
 function renderCart() {
   const entries = Object.entries(cart);
@@ -185,7 +187,12 @@ function renderCart() {
   });
 
   // build whatsapp order message
-  let msg = "नमस्कार ॐ कार किराणा स्टोअर! 🙏%0Aमला खालील वस्तू हव्या आहेत:%0A%0A";
+  const custName = customerNameInput.value.trim();
+  const custPhone = customerPhoneInput.value.trim();
+  let msg = "नमस्कार ॐ कार किराणा स्टोअर! 🙏%0A";
+  if (custName) msg += `माझे नाव: ${custName}%0A`;
+  if (custPhone) msg += `माझा नंबर: ${custPhone}%0A`;
+  msg += "मला खालील वस्तू हव्या आहेत:%0A%0A";
   entries.forEach(([id, v]) => {
     const pr = PRODUCTS.find(x => String(x.id) === String(id));
     msg += `• ${pr.name} x ${v.qty}%0A`;
@@ -193,6 +200,25 @@ function renderCart() {
   msg += `%0Aएकूण (अंदाजे): ₹${total}%0A%0Aकृपया उपलब्धता निश्चित करा. धन्यवाद!`;
   orderWhatsapp.href = `https://wa.me/${STORE_PHONE}?text=${msg}`;
 }
+
+/* ===== SAVE ORDER TO ADMIN DASHBOARD ===== */
+orderWhatsapp.addEventListener("click", () => {
+  const entries = Object.entries(cart);
+  if (entries.length === 0) return;
+  const items = entries.map(([id, v]) => {
+    const pr = PRODUCTS.find(x => String(x.id) === String(id));
+    return { name: pr.name, qty: v.qty, price: pr.price };
+  });
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  db.collection("orders").add({
+    customerName: customerNameInput.value.trim() || "नाव दिले नाही",
+    customerPhone: customerPhoneInput.value.trim() || "नंबर दिला नाही",
+    items,
+    total,
+    status: "नवीन",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  }).catch(err => console.warn("Order log failed:", err));
+});
 
 /* ===== CART DRAWER TOGGLE ===== */
 const cartDrawer = document.getElementById("cartDrawer");
