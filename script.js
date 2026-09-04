@@ -145,6 +145,17 @@ const customerNameInput = document.getElementById("customerName");
 const customerPhoneInput = document.getElementById("customerPhone");
 
 function renderCart() {
+  // Drop stale cart entries that don't match any currently loaded product
+  // (can happen if items were added before Firestore products finished loading)
+  let cartChanged = false;
+  Object.keys(cart).forEach(id => {
+    if (!PRODUCTS.some(p => String(p.id) === String(id))) {
+      delete cart[id];
+      cartChanged = true;
+    }
+  });
+  if (cartChanged) saveCart();
+
   const entries = Object.entries(cart);
   const totalQty = entries.reduce((s, [, v]) => s + v.qty, 0);
   cartCount.textContent = totalQty;
